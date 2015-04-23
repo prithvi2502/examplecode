@@ -126,7 +126,7 @@ public class gameFirst implements Screen {
 	    	if(bullets.get(i).getDirection() == 0) {
 	    		bullets.get(i).updateButtom();
 		 		if(bullets.get(i).didCollide(allPlayers) == true) {
-		 			System.out.println("HIT NIGGA");
+		 			System.out.println("HIT");
 		 			bullets.remove(i);
 		 		} else if(bullets.get(i).getY() > 0 && bullets.get(i).getY() < 1080) {
 		 			bullets.get(i).draw(batch);
@@ -137,7 +137,7 @@ public class gameFirst implements Screen {
 	    	} else if(bullets.get(i).getDirection() == 1) {
 	    		bullets.get(i).updateLeft();
 		 		if(bullets.get(i).didCollide(allPlayers) == true) {
-		 			System.out.println("HIT NIGGA");
+		 			System.out.println("HIT");
 		 			bullets.remove(i);
 		 		} else if(bullets.get(i).getX() > 0 && bullets.get(i).getX() < 1920) {
 		 			bullets.get(i).draw(batch);
@@ -147,7 +147,7 @@ public class gameFirst implements Screen {
 	    	} else if(bullets.get(i).getDirection() == 2) {
 	    		bullets.get(i).updateRight();
 		 		if(bullets.get(i).didCollide(allPlayers) == true) {
-		 			System.out.println("HIT NIGGA");
+		 			System.out.println("HIT");
 		 			bullets.remove(i);
 		 		} else if(bullets.get(i).getX() > 0 && bullets.get(i).getX() < 1920) {
 		 			bullets.get(i).draw(batch);
@@ -158,7 +158,7 @@ public class gameFirst implements Screen {
 	    	} else if(bullets.get(i).getDirection() == 3) {
 	    		bullets.get(i).updateTop();
 		 		if(bullets.get(i).didCollide(allPlayers) == true) {
-		 			System.out.println("HIT NIGGA");
+		 			System.out.println("HIT");
 		 			bullets.remove(i);
 		 		} else if(bullets.get(i).getY() > 0 && bullets.get(i).getY() < 1080) {
 		 			bullets.get(i).draw(batch);
