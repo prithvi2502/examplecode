@@ -30,20 +30,16 @@ import com.me.MyGdxGame.entities.positions;
 
 public class gameFirst implements Screen {
 	private OrthographicCamera camera;
-	private OrthogonalTiledMapRenderer mapRenderer;
+	
 	RayHandler rayHandler;   
-	World world;
-	//private World world;
-	//private RayHandler handler;
+	World world;	
     private TiledMap map;	 
     private CollisionObjects CO;
     private ArrayList<playerPositions> allPlayers = new ArrayList<playerPositions>();
-    //private Texture Texture2;
     private TextureAtlas textureAtlas;
     private Player player;
     private SpriteBatch batch;  
     private OrthogonalTiledMapRenderer renderer;
-    //private MyGestureHandler gestureHandler;
     float animationTime = 0;
     boolean animationPlaying = true;
     boolean animationPlaying2 = true;
@@ -75,26 +71,28 @@ public class gameFirst implements Screen {
 
 	@Override
 	public void show() {
+		camera = new OrthographicCamera();
+		world = new World(new Vector2(0, 0), true);
+		rayHandler = new RayHandler(world);
+		rayHandler.setCulling(true);
+		rayHandler.useDiffuseLight(true);
+		rayHandler.setAmbientLight(0.2f, 0.2f, 0.2f,1.0f);
+		     
 		TmxMapLoader loader = new TmxMapLoader();
 	    map = loader.load("data/WhiteWater.tmx");
-	    //world = new World(new Vector2(0, 0), true);
-	    //handler = new RayHandler(world);
+	  
 	    
 	    player = new Player("prithvi2502", "currymonster69");
 	    CO = new CollisionObjects();
 	    allPlayers.add(CO.addPositionPlayers(player));
 	    batch = new SpriteBatch();
-	    camera = new OrthographicCamera();
-	    //handler.setCombinedMatrix(camera.combined);
+	    
+	    
 	    renderer = new OrthogonalTiledMapRenderer(map);
 	    sr = new ShapeRenderer();
-	   //new PointLight(handler, 5000, Color.CYAN, 100, (1920 / 2)-50, (1980 / 2)+50);
-	    world = new World(new Vector2(0, 0), true);
-	      rayHandler = new RayHandler(world);
-	      rayHandler.setCulling(true);
-	      rayHandler.setCombinedMatrix(camera.combined);      
-	      rayHandler.useDiffuseLight(true);
-	      rayHandler.setAmbientLight(0.2f, 0.2f, 0.2f,1.0f);
+	    new PointLight(rayHandler, 50, Color.CYAN, 1, 400, 300);
+	    
+	    camera.zoom = .5f;
 	}
 	
 
@@ -103,23 +101,32 @@ public class gameFirst implements Screen {
 		
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
-		camera.zoom = .5f;
+		
 	    renderer.render();
 	    camera.update();
+	    
 	    renderer.setView(camera);
 	    batch.begin();
 	    
-	    update();
-	   //handler.setCombinedMatrix(camera.c2ombined);
-	   //handler.updateAndRender();
+	    inputUpdate();
+	  
+	    characterUpdate();
+
+	   	    	
+	    batch.end();
+	    rayHandler.setCombinedMatrix(camera.combined.cpy().scl(100));
+	    rayHandler.render();
 	    
-	    allPlayers = CO.updatePlayerPositions(player.getPlayerID(), player.getPlayerCurrentPosX(), player.getPlayerCurrentPosY(), allPlayers);
+	    
+	}
+	public void characterUpdate() {
+		allPlayers = CO.updatePlayerPositions(player.getPlayerID(), player.getPlayerCurrentPosX(), player.getPlayerCurrentPosY(), allPlayers);
 	    currentPosx =  player.getPlayerCurrentPosX();
     	currentPosy = player.getPlayerCurrentPosY();
 	    for(int i=0; i < allPlayers.size(); i++) {
 	    	System.out.println(allPlayers.get(i).getPlayerID() + " " + allPlayers.get(i).getX() + " " + allPlayers.get(i).getY());
-	    	//currentPosx = allPlayers.get(i).getX();
-	    	//currentPosy = allPlayers.get(i).getY();
+	    	currentPosx = allPlayers.get(i).getX();
+	    	currentPosy = allPlayers.get(i).getY();
 	    }
 	 		
 	    for (int i = 0; i < bullets.size(); i++) {
@@ -131,7 +138,6 @@ public class gameFirst implements Screen {
 		 		} else if(bullets.get(i).getY() > 0 && bullets.get(i).getY() < 1080) {
 		 			bullets.get(i).draw(batch);
 		 		}else {
-		 		
 		 			bullets.remove(i);
 		 		}
 	    	} else if(bullets.get(i).getDirection() == 1) {
@@ -154,7 +160,6 @@ public class gameFirst implements Screen {
 		 		} else {
 		 			bullets.remove(i);
 		 		}
-		 		//System.out.println(bullets.get(i).getxDep() + " " + bullets.get(i).getyDep());
 	    	} else if(bullets.get(i).getDirection() == 3) {
 	    		bullets.get(i).updateTop();
 		 		if(bullets.get(i).didCollide(allPlayers) == true) {
@@ -168,18 +173,8 @@ public class gameFirst implements Screen {
 	    	}
     		
 	    }
-
-	    Color clr3 = new Color(0.5f,0.8f,0.2f, 0.9f);
-	    PointLight pt = new PointLight(rayHandler, 65, clr3, 100, 844, 326); 
-	      pt.setStaticLight(true);
-	   	    	
-	    batch.end();
-	    
-	      rayHandler.updateAndRender();
-	   // System.out.println(camera.position.x + " " + camera.position.y);
 	}
-	
-	public void update() {
+	public void inputUpdate() {
 		if(Gdx.input.isKeyPressed(Keys.A) ){
 	       player.moveLeft(camera, batch);
 	       currentDirection = 2;
@@ -234,6 +229,7 @@ public class gameFirst implements Screen {
 	    	}
 	 	    play = false;
 	    }      
+		rayHandler.update();
 		
 	}
 	private void setGameToNormal(TextureRegion texture) {
@@ -249,19 +245,19 @@ public class gameFirst implements Screen {
 
 	@Override
 	public void hide() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void pause() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void resume() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -269,7 +265,7 @@ public class gameFirst implements Screen {
 	public void dispose() {
 		rayHandler.dispose();
 		world.dispose();
-		mapRenderer.dispose();
+		renderer.dispose();
 		map.dispose();
 		batch.dispose();
 		textureAtlas.dispose();
